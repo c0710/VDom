@@ -1,0 +1,19 @@
+{
+  "name": "vdom",
+  "version": "1.0.0",
+  "description": "Virtual DOM的创建过程，并实现一个简单的Diff算法来更新页面",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/c0710/VDom.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/c0710/VDom/issues"
+  },
+  "homepage": "https://github.com/c0710/VDom#readme"
+}
