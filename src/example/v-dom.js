@@ -55,8 +55,8 @@ function dfsWalk(oldNode, newNode, index, patches) {
 
     if (newNode === null) { // 节点被删除
 
-    } else if (typeof oldNode === 'string' && typeof newNode === 'string') { // 文字节点改变
-        if (newNode !== oldNode) {
+    } else if (typeof oldNode === 'string' && typeof newNode === 'string') { // 文字节点
+        if (newNode !== oldNode) {  // 文字节点改变
             currentPatch.push({type: TEXT, content: newNode})
         }
     }

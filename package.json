@@ -4,7 +4,8 @@
   "description": "Virtual DOM的创建过程，并实现一个简单的Diff算法来更新页面",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rimraf dist && webpack --mode production --config webpack.config.js"
   },
   "repository": {
     "type": "git",
@@ -15,5 +16,14 @@
   "bugs": {
     "url": "https://github.com/c0710/VDom/issues"
   },
-  "homepage": "https://github.com/c0710/VDom#readme"
+  "homepage": "https://github.com/c0710/VDom#readme",
+  "devDependencies": {
+    "babel": "^6.23.0",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^8.0.0",
+    "babel-preset-env": "^1.7.0",
+    "rimraf": "^2.6.2",
+    "webpack": "^4.17.1",
+    "webpack-cli": "^3.1.0"
+  }
 }
