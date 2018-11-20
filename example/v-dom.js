@@ -103,7 +103,7 @@ var tree = el('div', {'id': 'container'}, [
 ])
 
 
-document.body.appendChild(tree.render());
+// document.body.appendChild(tree.render());
 
 // 3. 生成新的虚拟DOM
 var newTree = el('div', {'id': 'container'}, [
