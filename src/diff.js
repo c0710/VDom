@@ -1,5 +1,6 @@
 import * as patch from './patch'
 import * as _ from './utils'
+import listDiff from 'list-diff2'
 
 
 const diff = (oldTree, newTree) => {
@@ -53,6 +54,11 @@ const dfsWalk = (oldNode, newNode, index, patches) => {
 
 // 深度遍历子节点计算
 const dfsWalkChild = (oldChildren, newChildren, index, patches) => {
+    let diffs = listDiff(oldChildren, newChildren, 'key');
+
+    console.log(diffs);
+
+
     let currentNodeIndex = index;
     let leftNode = null;
 

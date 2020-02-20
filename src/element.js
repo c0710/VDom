@@ -9,6 +9,9 @@ function Element(tagName, props, children) {
     this.tagName = tagName;
     this.props = props || {};
     this.children = children || [];
+    this.key = props
+        ? props.key
+        : void 666;
 
     let count = 0;
     // 计算children的数量
