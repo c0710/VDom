@@ -1,3 +1,5 @@
+let vKey = 0;
+
 function Element(tagName, props, children) {
 
     //  如果没有传props,则默认props为{}
@@ -7,7 +9,10 @@ function Element(tagName, props, children) {
     }
 
     this.tagName = tagName;
-    this.props = props || {};
+    this.props = {
+        ...props,
+        'v-key': ++vKey,
+    }
     this.children = children || [];
     this.key = props ?
         props.key :
@@ -19,7 +24,12 @@ function Element(tagName, props, children) {
         if (child instanceof Element) {
             count += child.count
         } else {
-            this.children[index] = '' + child
+            this.children[index] = {
+                tagName: 'textNode',
+                props: { 'v-key': ++vKey },
+                children: [],
+                text: child,
+            };
         }
         count++
     })
@@ -41,18 +51,21 @@ Element.prototype.render = function () {
         setProp(el, k, value)
     }
 
-    let children = this.children;
+
+    // 如果有子节点 则递归处理子节点
+    let children = this.children || [];
     children.forEach(child => {
         let childEl = (child instanceof Element) ?
             child.render() // 如果子节点也是VDOM，递归构建DOM节点
             :
-            document.createTextNode(child);
+            document.createTextNode(child.text + '---' + child.props['v-key']);
 
         el.appendChild(childEl)
     })
 
-    return el
+    this.$el = el;
 
+    return el
 }
 
 function isEventProp(name) {
