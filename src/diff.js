@@ -55,7 +55,6 @@ const dfsWalk = (oldNode, newNode, index, patches) => {
         })
     }
 
-    // console.log(currentPatch)
     if (currentPatch.length) {
         patches[index] = currentPatch;
     }
@@ -85,9 +84,6 @@ const dfsWalkChild = (oldChildren, newChildren, index, patches, currentPatch) =>
         currentNodeIndex = (leftNode && leftNode.count) ?
             currentNodeIndex + leftNode.count + 1 :
             currentNodeIndex + 1;
-        // console.log(child.key);
-        // console.log(child, '==>', newChild)
-        // console.log('----------------------');
         dfsWalk(child, newChild, currentNodeIndex, patches);
         leftNode = child
     })
