@@ -41,7 +41,6 @@ const applyPatches = (node, patch) => {
                   } else {
                     node.nodeValue = currentPatch.content
                   }
-                // console.log('text change! new text is ' + currentPatch.content);
                 break;
             case PROPS:
                 for(let [key, val] of Object.entries(currentPatch.props)) {
@@ -66,7 +65,6 @@ const applyPatches = (node, patch) => {
 
 function moveChild(node, moves) {
     let staticNodeList = Array.from(node.childNodes);
-    // console.log(staticNodeList);
 
     let keyNodeMap = {};
 
@@ -82,7 +80,6 @@ function moveChild(node, moves) {
     moves.forEach(move => {
         const index = move.index;
         // type为0时说明删除了index位置下的节点
-        console.log(move);
         if (move.type === 0) {
             // 有可能在删除之前已经插入过 改变了原children索引
             if (staticNodeList[index] === node.childNodes[index]) {

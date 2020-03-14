@@ -84,7 +84,6 @@ btn.addEventListener(
     () => {
         let patches = diff(list, newList);
         patch(listDom, patches);
-        // patch(treeDom, patches);
     },
     false
 );
