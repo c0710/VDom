@@ -1,3 +1,5 @@
+import { setAttr } from './utils';
+
 const REPLACE = 'REPLACE';  // 替换掉原来的节点
 const REORDER = 'REORDER';  // 移动、删除、新增子节点
 const PROPS = 'PROPS';      // 修改了节点的属性
@@ -12,7 +14,7 @@ const dfsWalk = (node, walker, patches) => {
 
     let currentPatches = patches[walker.index];
 
-    var len = node.childNodes
+    const len = node.childNodes
         ? node.childNodes.length
         : 0;
 
@@ -28,20 +30,75 @@ const dfsWalk = (node, walker, patches) => {
 }
 
 const applyPatches = (node, patch) => {
-    console.log(node, patch)
     for (let i = 0; i < patch.length; i++) {
-        let patchType = patch.type;
+        let currentPatch = patch[i];
+        let patchType = currentPatch.type;
+    
         switch (patchType) {
             case TEXT:
-                console.log('text change! new text is ' + patch.content);
+                if (node.textContent) {
+                    node.textContent = currentPatch.content
+                  } else {
+                    node.nodeValue = currentPatch.content
+                  }
+                // console.log('text change! new text is ' + currentPatch.content);
                 break;
             case PROPS:
-                console.log('props change!');
+                for(let [key, val] of Object.entries(currentPatch.props)) {
+                    if (val === undefined) {
+                        node.removeAttribute(key)
+                    } else {
+                        setAttr(node, key, val);
+                    }
+                }
                 break;
             case REPLACE:
-                console.log('node has been replace!')
+                // 将虚拟dom对象转换为真实dom
+                let newNode = (typeof currentPatch.node === 'string') ?  document.createTextNode(currentPatch.node) : currentPatch.node.render();
+                node.parentNode.replaceChild(newNode, node);
+                break;
+            case REORDER:
+                moveChild(node, currentPatch.moves);
+                break
         }
     }
+}
+
+function moveChild(node, moves) {
+    let staticNodeList = Array.from(node.childNodes);
+    // console.log(staticNodeList);
+
+    let keyNodeMap = {};
+
+    staticNodeList.forEach(node => {
+        // 如果是dom节点，则将key与对应的node节点映射
+        if (node.nodeType === 1) {
+            const key = node.getAttribute('key');
+            if (key) {
+                keyNodeMap[key] = node;
+            }
+        }
+    })
+    moves.forEach(move => {
+        const index = move.index;
+        // type为0时说明删除了index位置下的节点
+        console.log(move);
+        if (move.type === 0) {
+            // 有可能在删除之前已经插入过 改变了原children索引
+            if (staticNodeList[index] === node.childNodes[index]) {
+                node.removeChild(node.childNodes[index]);
+            }
+            staticNodeList.splice(index, 1);
+        } else {
+            // type为1时将move.item插入到index位置
+            let insertNode = keyNodeMap[move.item.key] 
+            ? keyNodeMap[move.item.key] : (typeof move.item === 'object') 
+            ? move.item.render() : document.createTextNode(move.item)
+            staticNodeList.splice(index, 0, insertNode);
+            node.insertBefore(insertNode, node.childNodes[index] || null)
+        }
+        
+    })
 }
 
 

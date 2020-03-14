@@ -1,95 +1,65 @@
-let vKey = 0;
 
-function Element(tagName, props, children) {
+import {
+    setAttr
+} from './utils';
 
-    //  如果没有传props,则默认props为{}
-    if (Array.isArray(props)) {
-        children = props;
-        props = {}
-    }
-
-    this.tagName = tagName;
-    this.props = {
-        ...props,
-        'v-key': ++vKey,
-    }
-    this.children = children || [];
-    this.key = props ?
-        props.key :
-        void 666;
-
-    let count = 0;
-    // 计算children的数量
-    this.children.forEach((child, index) => {
-        if (child instanceof Element) {
-            count += child.count
-        } else {
-            this.children[index] = {
-                tagName: 'textNode',
-                props: { 'v-key': ++vKey },
-                children: [],
-                text: child,
-            };
+class Element {
+    constructor(tagName, props, children) {
+        if (Array.isArray(props)) {
+            children = props
+            props = {}
         }
-        count++
-    })
+        this.tagName = tagName;
+        this.props = props || {};
+        this.children = children || [];
+        this.$el = null;
+        this.key = props ? props.key : void 0;
 
-    this.count = count
+        // 记录当前节点所有子节点的个数
+        let count = 0
 
-}
+        this.children.forEach(child => {
+            if (child instanceof Element) {
+                count += child.count;
+            } else {
+                child = String(child);
+            }
 
-Element.prototype.render = function () {
+            count++;
+        })
 
-    // 根据tagName 构建DOM标签
-    let el = document.createElement(this.tagName);
-
-    let props = this.props;
-    for (let k in props) {
-        let value = props[k];
-
-        // el.setAttribute(k, value);
-        setProp(el, k, value)
+        this.count = count;
     }
 
+    render() {
+        // 根据tagName 构建DOM标签
+        let el = document.createElement(this.tagName);
 
-    // 如果有子节点 则递归处理子节点
-    let children = this.children || [];
-    children.forEach(child => {
-        let childEl = (child instanceof Element) ?
-            child.render() // 如果子节点也是VDOM，递归构建DOM节点
-            :
-            document.createTextNode(child.text + '---' + child.props['v-key']);
+        let props = this.props;
+        for (let k in props) {
+            let value = props[k];
 
-        el.appendChild(childEl)
-    })
-
-    this.$el = el;
-
-    return el
-}
-
-function isEventProp(name) {
-    return /^on/.test(name);
-}
-
-function extractEventName(name) {
-    return name.slice(2).toLowerCase();
-}
-
-function setProp($target, name, value) {
-    if (name === 'className') { // 因为class是保留字，JSX使用className来表示节点的class
-        return $target.setAttribute('class', value);
-    } else if (isEventProp(name)) { // 针对 on 开头的属性，为事件
-        return $target.addEventListener(extractEventName(name), value);
-    } else if (typeof value === 'boolean') { // 兼容属性为布尔值的情况
-        if (value) {
-            $target.setAttribute(name, value);
+            // el.setAttribute(k, value);
+            setAttr(el, k, value)
         }
-        return $target[name] = value;
-    } else {
-        return $target.setAttribute(name, value);
-    }
-}
 
+
+        // 如果有子节点 则递归处理子节点
+        let children = this.children || [];
+        children.forEach(child => {
+            let childEl = (child instanceof Element) ?
+                child.render() // 如果子节点也是VDOM，递归构建DOM节点
+                :
+                document.createTextNode(child);
+
+            el.appendChild(childEl)
+        })
+        this.$el = el;
+
+        return el
+    }
+
+
+}
 
 export default (tagName, props, children) => new Element(tagName, props, children)
